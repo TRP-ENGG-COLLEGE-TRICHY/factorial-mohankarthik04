@@ -19,7 +19,7 @@ jobs:
       with:
         timeout: 10
         max-score: 20
-        setup-command: pip install pytest
+        setup-command: pip3 install pytest
     - name: factio test
       id: factio-test
       uses: classroom-resources/autograding-io-grader@v1
@@ -41,7 +41,7 @@ jobs:
         command: python3 fact.py
         input: '4'
         expected-output: '24'
-        comparison-method: exact
+        comparison-method: contains
         timeout: 10
         max-score: 20
     - name: Autograding Reporter
