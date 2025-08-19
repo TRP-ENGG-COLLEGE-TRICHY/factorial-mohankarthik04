@@ -1,0 +1,54 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: factorial test
+      id: factorial-test
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        max-score: 20
+        setup-command: pip install pytest
+    - name: factio test
+      id: factio-test
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: factio test
+        setup-command: ''
+        command: python3 fact.py
+        input: '5'
+        expected-output: '120'
+        comparison-method: contains
+        timeout: 10
+        max-score: 20
+    - name: factio1 test
+      id: factio1-test
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: factio1 test
+        setup-command: ''
+        command: python3 fact.py
+        input: '4'
+        expected-output: '24'
+        comparison-method: exact
+        timeout: 10
+        max-score: 20
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        FACTORIAL-TEST_RESULTS: "${{steps.factorial-test.outputs.result}}"
+        FACTIO-TEST_RESULTS: "${{steps.factio-test.outputs.result}}"
+        FACTIO1-TEST_RESULTS: "${{steps.factio1-test.outputs.result}}"
+      with:
+        runners: factorial-test,factio-test,factio1-test
